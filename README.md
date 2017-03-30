@@ -1,11 +1,10 @@
 ## ImagePicker
 A simple library to select images from the gallery and camera.
+Rx version and sample removed in this fork.
 
 ## Screenshot
 
 <img src="https://raw.githubusercontent.com/esafirm/android-image-picker/master/art/ss.gif" height="460" width="284"/>
-
-## Download [![](https://jitpack.io/v/esafirm/android-image-picker.svg)](https://jitpack.io/#esafirm/android-image-picker)
 
 Add this to your project's `build.gradle`
 
@@ -21,13 +20,11 @@ And add this to your module's `build.gradle`
 
 ```groovy
 dependencies {
-	compile 'com.github.esafirm.android-image-picker:imagepicker:x.y.z@aar'
-	// for experimental rx picker
-	compile 'com.github.esafirm.android-image-picker:rximagepicker:x.y.z@aar'
+	compile 'com.github.maxxx:android-image-picker:x.y.z'
 }
 ```
 
-change `x.y.z` to version in the [release page](https://github.com/esafirm/android-image-picker/releases)
+change `x.y.z` to version in the [release page](https://github.com/maxxx/android-image-picker/releases)
 
 ## Usage
 
@@ -53,6 +50,7 @@ ImagePicker.create(this)
 	.limit(10) // max images can be selected (99 by default)
 	.showCamera(true) // show camera or not (true by default)
 	.imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+	.targetDirectory("/sdcard") // forced directory where pick images
 	.origin(images) // original selected images, used in multi mode
 	.start(REQUEST_CODE_PICKER); // start image picker activity with request code
 ```                
@@ -68,6 +66,7 @@ intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGES, images);
 intent.putExtra(ImagePicker.EXTRA_FOLDER_TITLE, "Album");
 intent.putExtra(ImagePicker.EXTRA_IMAGE_TITLE, "Tap to select images");
 intent.putExtra(ImagePicker.EXTRA_IMAGE_DIRECTORY, "Camera");
+intent.putExtra(ImagePicker.EXTRA_TARGET_DIRECTORY, "/sdcard");
 intent.putExtra(ImagePicker.EXTRA_RETURN_AFTER_FIRST, true); //default is false
 
 startActivityForResult(intent, REQUEST_CODE_PICKER);
