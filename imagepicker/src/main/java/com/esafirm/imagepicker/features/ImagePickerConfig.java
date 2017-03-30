@@ -3,11 +3,13 @@ package com.esafirm.imagepicker.features;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.util.ArrayList;
 
 import com.esafirm.imagepicker.R;
 import com.esafirm.imagepicker.model.Image;
-
-import java.util.ArrayList;
 
 public class ImagePickerConfig implements Parcelable {
 
@@ -16,6 +18,7 @@ public class ImagePickerConfig implements Parcelable {
     private String folderTitle;
     private String imageTitle;
     private String imageDirectory;
+    private @Nullable String targetDirectory; // allowed folder with images to pick
 
     private int mode;
     private int limit;
@@ -34,6 +37,7 @@ public class ImagePickerConfig implements Parcelable {
         this.folderMode = false;
         this.imageDirectory = context.getString(R.string.ef_image_directory);
         this.returnAfterFirst = true;
+        this.targetDirectory = null;
     }
 
     public boolean isReturnAfterFirst() {
@@ -104,9 +108,19 @@ public class ImagePickerConfig implements Parcelable {
         return imageDirectory;
     }
 
-    public void setImageDirectory(String imageDirectory) {
+    public void setImageDirectory( String imageDirectory) {
         this.imageDirectory = imageDirectory;
     }
+
+    @Nullable
+    public String getTargetDirectory() {
+        return targetDirectory;
+    }
+
+    public void setTargetDirectory(@NonNull String targetDirectory) {
+        this.targetDirectory = targetDirectory;
+    }
+
 
     /* --------------------------------------------------- */
     /* > Parcelable */
@@ -123,6 +137,7 @@ public class ImagePickerConfig implements Parcelable {
         dest.writeString(this.folderTitle);
         dest.writeString(this.imageTitle);
         dest.writeString(this.imageDirectory);
+        dest.writeString(this.targetDirectory);
         dest.writeInt(this.mode);
         dest.writeInt(this.limit);
         dest.writeByte(this.folderMode ? (byte) 1 : (byte) 0);
@@ -135,6 +150,7 @@ public class ImagePickerConfig implements Parcelable {
         this.folderTitle = in.readString();
         this.imageTitle = in.readString();
         this.imageDirectory = in.readString();
+        this.targetDirectory = in.readString();
         this.mode = in.readInt();
         this.limit = in.readInt();
         this.folderMode = in.readByte() != 0;

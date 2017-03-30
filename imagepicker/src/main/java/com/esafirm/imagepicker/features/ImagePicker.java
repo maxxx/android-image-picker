@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-import com.esafirm.imagepicker.model.Image;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.esafirm.imagepicker.model.Image;
 
 public abstract class ImagePicker {
 
@@ -20,6 +20,7 @@ public abstract class ImagePicker {
     public static final String EXTRA_FOLDER_TITLE = "folderTitle";
     public static final String EXTRA_IMAGE_TITLE = "imageTitle";
     public static final String EXTRA_IMAGE_DIRECTORY = "imageDirectory";
+    public static final String EXTRA_TARGET_DIRECTORY = "imageTargetDirectory";
     public static final String EXTRA_RETURN_AFTER_FIRST = "returnAfterFirst";
 
     public static final int MAX_LIMIT = 99;
@@ -130,6 +131,11 @@ public abstract class ImagePicker {
 
     public ImagePicker imageDirectory(String directory) {
         config.setImageDirectory(directory);
+        return this;
+    }
+
+    public ImagePicker targetDirectory(String directory) {
+        config.setTargetDirectory(directory);
         return this;
     }
 

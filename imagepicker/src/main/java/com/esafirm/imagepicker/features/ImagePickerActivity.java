@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.esafirm.imagepicker.R;
 import com.esafirm.imagepicker.adapter.FolderPickerAdapter;
@@ -40,9 +44,6 @@ import com.esafirm.imagepicker.model.Folder;
 import com.esafirm.imagepicker.model.Image;
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration;
 import com.esafirm.imagepicker.view.ProgressWheel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.esafirm.imagepicker.features.ImagePicker.EXTRA_SELECTED_IMAGES;
 import static com.esafirm.imagepicker.features.ImagePicker.MODE_MULTIPLE;
@@ -295,7 +296,7 @@ public class ImagePickerActivity extends AppCompatActivity
 
     private void getData() {
         presenter.abortLoad();
-        presenter.loadImages(config.isFolderMode());
+        presenter.loadImages(config.isFolderMode(), config.getTargetDirectory());
     }
 
     /**
@@ -563,7 +564,7 @@ public class ImagePickerActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        if (config.isFolderMode() && !isDisplayingFolderView()) {
+        if (config.isFolderMode() && !isDisplayingFolderView() && TextUtils.isEmpty(config.getTargetDirectory())) {
             setFolderAdapter(null);
             return;
         }

@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
+
+import java.io.File;
+import java.util.List;
 
 import com.esafirm.imagepicker.R;
 import com.esafirm.imagepicker.features.camera.CameraModule;
@@ -15,9 +19,6 @@ import com.esafirm.imagepicker.features.common.BasePresenter;
 import com.esafirm.imagepicker.features.common.ImageLoaderListener;
 import com.esafirm.imagepicker.model.Folder;
 import com.esafirm.imagepicker.model.Image;
-
-import java.io.File;
-import java.util.List;
 
 public class ImagePickerPresenter extends BasePresenter<ImagePickerView> {
 
@@ -33,11 +34,11 @@ public class ImagePickerPresenter extends BasePresenter<ImagePickerView> {
         imageLoader.abortLoadImages();
     }
 
-    public void loadImages(boolean isFolderMode) {
+    public void loadImages(boolean isFolderMode, @Nullable String targetDirectory) {
         if (!isViewAttached()) return;
 
         getView().showLoading(true);
-        imageLoader.loadDeviceImages(isFolderMode, new ImageLoaderListener() {
+        imageLoader.loadDeviceImages(isFolderMode, targetDirectory, new ImageLoaderListener() {
             @Override
             public void onImageLoaded(final List<Image> images, final List<Folder> folders) {
                 handler.post(new Runnable() {
