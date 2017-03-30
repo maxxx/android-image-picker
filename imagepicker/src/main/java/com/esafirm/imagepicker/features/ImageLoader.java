@@ -68,56 +68,59 @@ public class ImageLoader {
         public void run() {
             Cursor cursor;
 
-            if (!TextUtils.isEmpty(targetDirectory))
-            {
-                targetDirectory = targetDirectory + "%";
-                String[] whereArgs = new String[]{targetDirectory};
-                String where = MediaStore.Images.Media.DATA + " LIKE ?";
 
-                cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
-                        where, whereArgs, MediaStore.Images.Media.DATE_ADDED);
-            } else
-            {
-                cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
-                        null, null, MediaStore.Images.Media.DATE_ADDED);
-            }
-
-            if (cursor == null) {
-                listener.onFailed(new NullPointerException());
-                return;
-            }
-
-            List<Image> temp = new ArrayList<>(cursor.getCount());
+            List<Image> temp = new ArrayList<>();
             Map<String, Folder> folderMap = null;
             if (isFolderMode) {
                 folderMap = new HashMap<>();
             }
 
-            if (cursor.moveToLast()) {
-                do {
-                    long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
-                    String name = cursor.getString(cursor.getColumnIndex(projection[1]));
-                    String path = cursor.getString(cursor.getColumnIndex(projection[2]));
-                    String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
+            if (!TextUtils.isEmpty(targetDirectory))
+            {
+                if (!isFolderMode)
+                    return; // your mistake!
+                ArrayList<Image> list = new ArrayList<>();
+                parseAllImages(list, targetDirectory);
+                String fName = new File(targetDirectory).getName();
+                Folder folder = new Folder(fName);
+                folderMap.put(fName, folder);
+                folder.getImages().addAll(list);
+            } else
+            {
+                cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
+                        null, null, MediaStore.Images.Media.DATE_ADDED);
 
-                    File file = makeSafeFile(path);
-                    if (file != null && file.exists()) {
-                        Image image = new Image(id, name, path, false);
-                        temp.add(image);
+                if (cursor == null) {
+                    listener.onFailed(new NullPointerException());
+                    return;
+                }
 
-                        if (folderMap != null) {
-                            Folder folder = folderMap.get(bucket);
-                            if (folder == null) {
-                                folder = new Folder(bucket);
-                                folderMap.put(bucket, folder);
+                if (cursor.moveToLast()) {
+                    do {
+                        long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
+                        String name = cursor.getString(cursor.getColumnIndex(projection[1]));
+                        String path = cursor.getString(cursor.getColumnIndex(projection[2]));
+                        String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
+
+                        File file = makeSafeFile(path);
+                        if (file != null && file.exists()) {
+                            Image image = new Image(id, name, path, false);
+                            temp.add(image);
+
+                            if (folderMap != null) {
+                                Folder folder = folderMap.get(bucket);
+                                if (folder == null) {
+                                    folder = new Folder(bucket);
+                                    folderMap.put(bucket, folder);
+                                }
+                                folder.getImages().add(image);
                             }
-                            folder.getImages().add(image);
                         }
-                    }
 
-                } while (cursor.moveToPrevious());
+                    } while (cursor.moveToPrevious());
+                }
+                cursor.close();
             }
-            cursor.close();
 
             /* Convert HashMap to ArrayList if not null */
             List<Folder> folders = null;
@@ -140,4 +143,30 @@ public class ImageLoader {
         }
     }
 
+    private final String[] extensions = { "jpg", "png", "jpeg", "JPG", "PNG", "JPEG" };
+
+    private void parseAllImages(ArrayList<Image> images, String rootFolder) {
+        File file = new File(rootFolder);
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null && files.length > 0) {
+                for (File f : files) {
+                    if (f.isDirectory()) {
+                        parseAllImages(images, f.getAbsolutePath());
+                    } else {
+                        for (int i = 0; i < extensions.length; i++) {
+                            if (f.getAbsolutePath().endsWith(extensions[i])) {
+                                long id = -1;
+                                String name = f.getName();
+                                String path = f.getPath();
+                                Image image = new Image(id, name, path, false);
+                                images.add(image);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }

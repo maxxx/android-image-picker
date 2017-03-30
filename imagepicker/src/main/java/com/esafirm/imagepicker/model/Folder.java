@@ -10,8 +10,8 @@ public class Folder {
     private String folderName;
     private ArrayList<Image> images;
 
-    public Folder(String bucket) {
-        folderName = bucket;
+    public Folder(String folderName) {
+        this.folderName = folderName;
         images = new ArrayList<>();
     }
 

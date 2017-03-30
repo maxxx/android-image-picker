@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 public class Image implements Parcelable {
 
+    @Deprecated
     private long id;
     private String name;
     private String path;
@@ -17,13 +18,13 @@ public class Image implements Parcelable {
         this.isSelected = isSelected;
     }
 
-    public long getId() {
-        return id;
-    }
+//    public long getId() {
+//        return id;
+//    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+//    public void setId(long id) {
+//        this.id = id;
+//    }
 
     public String getName() {
         return name;
